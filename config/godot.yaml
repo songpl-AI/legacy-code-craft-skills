@@ -1,0 +1,248 @@
+# Godot Engine 配置
+# 支持 Godot 4.x GDScript 和 C#
+
+engine: Godot
+language: GDScript
+
+# 脚本文件模式
+filePattern: "*.gd,*.cs"
+
+# 脚本类型检测
+fileDetection:
+  - "^\\s*extends\\s+"
+  - "^\\s*class_name\\s+"
+  - "^\\s*@tool"
+  - "^\\s*@export"
+
+# TAG 提取：类名或节点路径
+tagExtract:
+  pattern: "^\\s*class_name\\s+(\\w+)"
+  group: 1
+  fallbackPatterns:
+    - "^\\s*extends\\s+(\\w+)"
+    - "^\\s*class\\s+(\\w+)\\s*[:(]"
+
+# 节点路径
+nodePath:
+  defaultPath: "^\\s*@onready\\s+var\\s+(\\w+)\\s*:"
+  exportedPath: "^\\s*@export\\s+var\\s+(\\w+)\\s*:"
+
+# 事件系统：signal/emit
+eventSystem:
+  # 信号连接
+  watch:
+    - pattern: "connect\\s*\\(\\s*\"([^\"]+)\""
+      group: 1
+      description: "连接信号"
+    - pattern: "\\.(\\w+)\\s*\\.connect\\s*\\("
+      group: 1
+      description: "对象信号连接"
+    - pattern: "connect\\s*\\(\\s*(\\w+)\\s*,"
+      group: 1
+      description: "Callable 连接"
+    - pattern: "Signal\\s*\\(\\s*(\\w+)\\s*,"
+      group: 1
+      description: "信号引用"
+
+  # 信号触发
+  fire:
+    - pattern: "emit_signal\\s*\\(\\s*\"([^\"]+)\""
+      group: 1
+      description: "发出信号"
+    - pattern: "emit_signal\\s*\\(\\s*(\\w+)\\s*,"
+      group: 1
+      description: "带参数的信号"
+    - pattern: "\\.emit\\s*\\(\\)"
+      description: "匿名信号触发"
+
+  # 内置信号
+  builtInSignals:
+    - "pressed"
+    - "released"
+    - "toggled"
+    - "value_changed"
+    - "item_selected"
+    - "mouse_entered"
+    - "mouse_exited"
+    - "body_entered"
+    - "body_exited"
+    - "area_entered"
+    - "area_exited"
+    - "timeout"
+    - "tree_entered"
+    - "tree_exited"
+    - "ready"
+    - "sort"
+
+# UI 绑定
+uiBinding:
+  findNode:
+    - pattern: "\\$\\s*\"([^\"]+)\""
+      group: 1
+      description: "$ 节点查找"
+    - pattern: "%\\s*\"([^\"]+)\""
+      group: 1
+      description: "% 唯一节点查找"
+    - pattern: "get_node\\s*\\(\\s*\"([^\"]+)\"\\s*\\)"
+      group: 1
+      description: "get_node 查找"
+    - pattern: "get_node_or_null\\s*\\(\\s*\"([^\"]+)\"\\s*\\)"
+      group: 1
+      description: "安全节点查找"
+
+  # 节点类型
+  nodeTypes:
+    - "Node"
+    - "Node2D"
+    - "Node3D"
+    - "Control"
+    - "Button"
+    - "Label"
+    - "TextureRect"
+    - "LineEdit"
+    - "TextEdit"
+    - "Slider"
+    - "ProgressBar"
+    - "CheckBox"
+    - "CheckButton"
+    - "OptionButton"
+    - "PopupMenu"
+    - "Tree"
+    - "ListContainer"
+    - "ItemList"
+    - "HBoxContainer"
+    - "VBoxContainer"
+    - "GridContainer"
+    - "CenterContainer"
+    - "Panel"
+    - "PanelContainer"
+    - "TabContainer"
+    - "ColorRect"
+    - "Sprite2D"
+    - "Sprite3D"
+    - "AnimatedSprite2D"
+    - "AnimationPlayer"
+    - "Tween"
+
+# 资源加载
+resourceLoading:
+  load:
+    - pattern: "load\\s*\\(\\s*\"([^\"]+)\"\\s*\\)"
+      group: 1
+    - pattern: "preload\\s*\\(\\s*\"([^\"]+)\"\\s*\\)"
+      group: 1
+  dynamicLoad:
+    - pattern: "ResourceLoader\\.load\\("
+
+# 日志
+logging:
+  error:
+    - pattern: "push_error\\s*\\("
+      template: "push_error(\"[{func}] {msg}\")"
+    - pattern: "assert\\s*\\("
+      template: "assert(false, \"[{func}] {msg}\")"
+  fatal:
+    - pattern: "push_fatal\\s*\\("
+      template: "push_fatal(\"[{func}] {msg}\")"
+  info:
+    - pattern: "print\\s*\\("
+      template: "print(\"[{func}] {msg}\")"
+    - pattern: "print_rich\\s*\\("
+      template: "print_rich(\"[{func}] {msg}\")"
+  warning:
+    - pattern: "push_warning\\s*\\("
+      template: "push_warning(\"[{func}] {msg}\")"
+  debug:
+    - pattern: "print_debug\\s*\\("
+      template: "print_debug(\"[{func}] {msg}\")"
+
+# HTTP 请求
+http:
+  patterns:
+    - "HTTPClient"
+    - "HTTPRequest"
+    - "request\\s*\\("
+  requestMethods:
+    - "request\\s*\\("
+    - "get\\s*\\("
+    - "post\\s*\\("
+    - "put\\s*\\("
+    - "delete\\s*\\("
+    - "patch\\s*\\("
+  response:
+    - "response_code"
+    - "get_result\\(\\)"
+    - "get_body\\(\\)"
+
+# 信号参数类型
+signalParamTypes:
+  button: "pressed:()"
+  slider: "value_changed:(value:float)"
+  line_edit: "text_changed:(new_text:string)"
+  text_edit: "text_changed:(new_text:string)"
+  item_list: "item_selected:(index:int)"
+  tree: "item_selected:(item:TreeItem,column:int)"
+  popup_menu: "id_pressed:(id:int)"
+
+# 组件生命周期
+lifecycle:
+  _init: "_init"
+  _ready: "_ready"
+  _enter_tree: "_enter_tree"
+  _exit_tree: "_exit_tree"
+  _process: "_process"
+  _physics_process: "_physics_process"
+  _input: "_input"
+  _unhandled_input: "_unhandled_input"
+  _draw: "_draw"
+  _notification: "_notification"
+  _get: "_get"
+  _set: "_set"
+  _get_property_list: "_get_property_list"
+  _to_string: "_to_string"
+
+# 代码质量
+qualityPatterns:
+  nullCheck:
+    - "is_instance_valid\\("
+    - "!= null"
+    - "== null"
+  typeCheck:
+    - "is\\s*\\("
+    - "as\\s+"
+    - "has_method\\("
+    - "has_signal\\("
+    - "has_node\\("
+  awaitAsync:
+    - "await\\s+"
+    - "@onready"
+    - "push_error\\("
+
+# 装饰器/属性
+gdscriptAttributes:
+  export:
+    - "@export"
+    - "@export_group"
+    - "@export_subgroup"
+    - "@export_multiline"
+    - "@export_range"
+    - "@export_enum"
+    - "@export_flags"
+  signal: "@signal"
+  onready: "@onready"
+  tool: "@tool"
+  static: "@static_func"
+
+# 组和标签
+groupsAndTags:
+  groupAdd: "add_to_group\\s*\\(\\s*\"([^\"]+)\"\\s*\\)"
+  groupRemove: "remove_from_group\\s*\\(\\s*\"([^\"]+)\"\\s*\\)"
+  groupCheck: "is_in_group\\s*\\(\\s*\"([^\"]+)\"\\s*\\)"
+  addToGroup: "add_to_group"
+  removeFromGroup: "remove_from_group"
+  isInGroup: "is_in_group"
+
+# 自动加载（单例）
+autoload:
+  singletonPattern: "[*]\\s*(\\w+)\\s*=\\s*\"res://"
+  getNode: "get_node\\s*\\(\\s*\"/root/(\\w+)\"\\s*\\)"

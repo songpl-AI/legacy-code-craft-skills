@@ -1,0 +1,11 @@
+# API Doc Token 配置（含敏感信息，禁止提交）
+.claude/api-doc-config.json
+
+# 文档系统认证配置（含敏感信息，禁止提交）
+skills/code-req/scripts/.config.json
+
+# Bug 系统认证配置（含敏感信息，禁止提交）
+skills/bug-reporter/config.json
+
+# 系统文件
+.DS_Store

@@ -1,0 +1,5 @@
+{
+  "_comment": "复制此文件为 .yach-config.json，填入真实值后即可使用。.yach-config.json 已在 .gitignore 中，不会被提交。",
+  "appkey": "your-appkey-here",
+  "appsecret": "your-appsecret-here"
+}

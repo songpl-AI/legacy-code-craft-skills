@@ -1,0 +1,10 @@
+{
+  "version": "3.0.0",
+  "date": "2026-04-18",
+  "changelog": [
+    "3.0.0 - 重构为多引擎通用架构：skills/ 目录、config/ 引擎配置、支持 Unity/Unreal/Godot",
+    "2.2.0 - 新增 公共知识管理、Memory 老化检测、按需加载、Feedback Loop",
+    "2.1.0 - TAG 替代 UUID 作为索引主键；code-modify 集成 API Doc 自动解析",
+    "2.0.0 - 初始版本，5 个 Skill + Reference 模板"
+  ]
+}

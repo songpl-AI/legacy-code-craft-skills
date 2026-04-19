@@ -1,0 +1,157 @@
+# 项目配置模板
+# 复制此文件为 project.yaml，按项目填写配置
+
+# ============================================================
+# 项目基本信息
+# ============================================================
+project:
+  name: "项目名称"
+  engine: Lua  # Lua / Unity / Godot / Unreal
+
+# ============================================================
+# 索引和缓存路径
+# 由 install.sh 映射，Claude Code 为 .claude/，Codex 为 .codex/
+# ============================================================
+paths:
+  agentDir: ".claude"  # 或 ".codex"
+  baseDir: "project-data"  # AGENT_DIR 下的子目录
+
+  # 各模块索引路径（相对于 {AGENT_DIR}/{baseDir}/）
+  indexes:
+    scriptIndex: "script-index.md"
+    eventIndex: "event-index.md"
+    archiveIndex: "archive/index.json"
+
+  # 缓存路径
+  cache:
+    analysis: "cache/"
+    memory: "memory-cache.json"
+
+  # 归档路径
+  archive:
+    base: "archive/scripts/"
+
+  # 需求分析输出路径
+  analysis:
+    base: "analysis/"
+
+  # Bug 报告路径
+  bugs:
+    base: "bugs/"
+
+  # 公共知识路径
+  common:
+    base: "memory/common/"
+
+# ============================================================
+# 文档系统配置
+# 支持: {{DOC_SYSTEM_TYPE}} / local(本地文件) / none(直接粘贴)
+# ============================================================
+docSystem:
+  type: "{{DOC_SYSTEM_TYPE}}"  # {{DOC_SYSTEM_TYPE}} / local / none
+
+  # 文档系统配置（type={{DOC_SYSTEM_TYPE}} 时需要）
+  {{DOC_SYSTEM_TYPE}}:
+    urlPattern: "https://{{DOC_SYSTEM_DOMAIN}}/docs/xxxxx"
+    # 认证配置路径（由用户填入，不提交到git）
+    configPath: "scripts/.yach-config.json"
+
+# ============================================================
+# Bug 系统配置
+# 支持: {{BUG_SYSTEM_TYPE}} / jira / linear / none
+# ============================================================
+bugSystem:
+  type: "{{BUG_SYSTEM_TYPE}}"  # {{BUG_SYSTEM_TYPE}} / jira / linear / none
+
+  # {{BUG_SYSTEM_TYPE}} 配置
+  {{BUG_SYSTEM_TYPE}}:
+    apiUrl: "https://{{BUG_SYSTEM_DOMAIN}}/api"
+    # 认证信息路径（由用户填入，不提交到git）
+    configPath: "tb_config.json"
+    parentTaskId: ""  # 当前迭代父任务ID
+    projectId: ""     # 项目ID
+    bugTypeId: ""     # 缺陷任务类型ID
+
+  # Jira 配置（预留）
+  jira:
+    host: ""
+    projectKey: ""
+
+  # Linear 配置（预留）
+  linear:
+    apiKey: ""
+
+# ============================================================
+# API 文档系统配置
+# 支持: {{API_DOC_TYPE}} / swagger / none
+# ============================================================
+apiDoc:
+  type: "{{API_DOC_TYPE}}"  # {{API_DOC_TYPE}} / swagger / none
+
+  # {{API_DOC_TYPE}} 配置
+  {{API_DOC_TYPE}}:
+    baseUrl: "https://{{API_DOC_HOST}}"
+    projectId: ""
+    # 认证token路径（由用户填入，不提交到git）
+    configPath: "api-doc-config.json"
+    cachePath: "api-doc-cache.json"
+
+# ============================================================
+# 代码规范
+# ============================================================
+codeStandards:
+  # 类名前缀（Lua中使用，如 {{CLASS_PREFIX}}: 或直接用 TableName）
+  classPrefix: ""
+
+  # 日志API（从 config/{engine}/logging.yaml 继承，可覆盖）
+  logging:
+    error: "g_LogError"
+    warning: "g_LogWarning"
+    info: "g_Log"
+
+  # HTTP 请求方法
+  http:
+    requestMethods:
+      - "HttpRequest"
+      - "HttpRequest2"
+    apiBridge: ""  # 项目特定的API桥接
+
+  # JSON 服务
+  json:
+    encode: "self.jsonService:encode"
+    decode: "self.jsonService:decode"
+
+  # 事件系统
+  eventSystem:
+    serviceName: "{{EVENT_SERVICE_NAME}}"
+    watchMethod: "self:Watch"
+    fireMethod: "self:Fire"
+    paramAccess: "args[0]"  # Watch 事件的参数访问方式
+
+# ============================================================
+# 生命周期方法名
+# ============================================================
+lifecycle:
+  init: "initialize"
+  exit: "Exit"
+  tick: "Tick"
+
+# ============================================================
+# 示例数据（用于 skill 文档中的示例）
+# 新项目请替换为符合项目实际的示例
+# ============================================================
+examples:
+  # 示例脚本名
+  scriptName: "example_script"
+
+  # 示例 TAG
+  tags:
+    - "ModuleName"
+
+  # 示例事件名
+  events:
+    - "EVENT_NAME"
+
+  # 示例接口路径
+  apiPaths:
+    - "/v3/example/api"

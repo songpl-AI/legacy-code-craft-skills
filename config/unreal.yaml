@@ -1,0 +1,173 @@
+# Unreal Engine 配置
+# 支持 Unreal C++ 和 Blueprint 解析
+
+engine: Unreal
+language: C++
+
+# 脚本文件模式
+filePattern: "*.cpp,*.h"
+
+# UPROPERTY/UCLASS 宏检测
+fileDetection:
+  - "UCLASS\\("
+  - "USTRUCT\\("
+  - "UFUNCTION\\("
+
+# TAG 提取：类名或模块名
+tagExtract:
+  pattern: "^\\s*UCLASS\\(|\\s*class\\s+(\\w+)\\s*[:{]"
+  group: 1
+  classNameGroup: 1
+  fallbackPatterns:
+    - "GENERATED_BODY\\(\\)"
+    - "^\\s*(\\w+)Actor"
+    - "^\\s*(\\w+)Component"
+
+# Blueprint 识别
+blueprint:
+  parentClass: "APlayerController|ACharacter|AActor|UUserWidget"
+  widgetPattern: "UCLASS\\(\\)\\s*class\\s+(\\w+)\\s*:\\s*public\\s+UUserWidget"
+
+# 事件系统：Delegate/Multicast
+eventSystem:
+  # 事件订阅
+  watch:
+    - pattern: "AddUObject\\([^,]+,\\s*&(\\w+)"
+      group: 1
+      description: "Delegate 订阅 (UObject)"
+    - pattern: "AddDynamic\\(\\s*(\\w+)\\s*,"
+      group: 1
+      description: "动态 multicast delegate"
+    - pattern: "BindActor\\([^)]+\\)\\s*->\\s*(\\w+)"
+      group: 1
+      description: "Actor 绑定"
+    - pattern: "TSubclassOf<[^>]+>\\s*(\\w+)"
+      group: 1
+      description: "类引用声明"
+
+  # 事件触发
+  fire:
+    - pattern: "Broadcast\\(\\)"
+      description: "Multicast delegate 触发"
+    - pattern: "Invoke\\("
+      description: "Single delegate 触发"
+    - pattern: "Execute\\("
+      description: "FDelegateHandle 执行"
+    - pattern: "On(\\w+)\\s*\\.Broadcast"
+      group: 1
+      description: "具名事件触发"
+
+# UI 绑定
+uiBinding:
+  findNode:
+    - pattern: "FindComponentByClass\\s*<\\s*(\\w+)\\s*>\\s*\\(\\)"
+      group: 1
+      description: "按类型查找组件"
+    - pattern: "GetWidget\\s*<\\s*(\\w+)\\s*>\\s*\\(\\)"
+      group: 1
+      description: "获取 Widget"
+    - pattern: "\\.Get\\s*<\\s*(\\w+)\\s*>\\s*\\(\"([^\"]+)\"\\)"
+      group: 1
+      description: "按名称获取组件"
+    - pattern: "GetOwner\\(\\)->FindComponentByClass"
+      description: "从 Owner 查找"
+
+  # Widget 绑定
+  widgetBinding:
+    - pattern: "Cast<\\s*(\\w+)\\s*>\\s*\\(\\s*(\\w+)"
+      group: 1
+      description: "Widget 转换"
+    - pattern: "\\.Get\\s*<\\s*(\\w+)\\s*>\\s*\\(\\)"
+      group: 1
+
+# UMG/UUserWidget
+userWidget:
+  binding: "UUserWidget"
+  eventBinding:
+    - "OnClicked"
+    - "OnPressed"
+    - "OnReleased"
+    - "OnHovered"
+    - "OnUnhovered"
+
+# 日志
+logging:
+  error:
+    - pattern: "UE_LOG\\s*\\(\\s*\\w+\\s*,\\s*Error"
+      template: "UE_LOG(LogTemp, Error, TEXT(\"[{func}] {msg}\"));"
+    - pattern: "ensureMsgf\\("
+      template: "ensureMsgf(false, TEXT(\"[{func}] {msg}\"));"
+  fatal:
+    - pattern: "checkf\\("
+      template: "checkf(false, TEXT(\"[{func}] {msg}\"));"
+  info:
+    - pattern: "UE_LOG\\s*\\(\\s*\\w+\\s*,\\s*Log"
+      template: "UE_LOG(LogTemp, Log, TEXT(\"[{func}] {msg}\"));"
+  warning:
+    - pattern: "UE_LOG\\s*\\(\\s*\\w+\\s*,\\s*Warning"
+      template: "UE_LOG(LogTemp, Warning, TEXT(\"[{func}] {msg}\"));"
+
+# HTTP 请求
+http:
+  patterns:
+    - "IHttpRequest"
+    - "FHttpModule"
+    - "HttpModule"
+  requestMethods:
+    - "CreateRequest"
+    - "ProcessRequest"
+  response:
+    - "OnProcessRequestComplete"
+    - "GetResponseCode"
+
+  # Slate/HTTP ( newer UE )
+  modernHttp:
+    - "FHttpManager"
+    - "IHttpRouter"
+
+  mock: "#if WITH_EDITOR"
+
+# 网络同步
+networking:
+  replPatterns:
+    - "Server\\w+"
+    - "Client\\w+"
+    - "WithValidation"
+  repNotify:
+    - "OnRep_\\w+"
+    - "DOREPLIFETIME"
+    - "DOREPLIFETIME_CONDITION"
+
+# 组件生命周期
+lifecycle:
+  beginPlay: "BeginPlay"
+  endPlay: "EndPlay"
+  tick: "Tick"
+  constructor: "Constructor"
+  destructor: "~\\w+"
+
+# 代码质量
+qualityPatterns:
+  nullCheck:
+    - "IsValid\\("
+    - "nullptr"
+    - "IsNullptr\\("
+  async:
+    - "Async\\w+"
+    - "TaskGraph"
+    - "TGraphTask"
+  threadSafe:
+    - "FCriticalSection"
+    - "FScopeLock"
+
+# Blueprint 可调用函数标记
+blueprintCallable:
+  - "UFUNCTION\\(BlueprintCallable\\)"
+  - "UFUNCTION(BlueprintPure\\)"
+  - "BlueprintImplementableEvent"
+
+# 特殊注释
+specialComments:
+  todo: "TODO\\("
+  fixme: "FIXME\\("
+  warning: "WARNING\\("

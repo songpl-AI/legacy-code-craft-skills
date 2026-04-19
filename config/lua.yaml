@@ -1,0 +1,71 @@
+# Lua 脚本配置
+# 用于 code-analyze、code-modify 等技能解析 Lua 脚本
+
+engine: Lua
+language: Lua
+filePattern: "*.lua"
+
+# TAG 提取：local TAG = "xxx"
+tagExtract:
+  pattern: "^\\s*local\\s+TAG\\s*=\\s*[\"']([^\"']+)[\"']"
+  group: 1
+  fallbackPattern: "(fsync_[a-zA-Z0-9]+)"
+
+# 事件系统：Watch/Fire
+eventSystem:
+  watch:
+    - pattern: "self:Watch\\(\"([^\"]+)\""
+      group: 1
+      description: "基类 Watch"
+    - pattern: "self\\.{{EVENT_SERVICE_NAME}}:Watch\\(\"([^\"]+)\""
+      group: 1
+      description: "{{EVENT_SERVICE_NAME}} Watch"
+  fire:
+    - pattern: "self:Fire\\(\"([^\"]+)\""
+      group: 1
+      description: "基类 Fire"
+    - pattern: "self\\.{{EVENT_SERVICE_NAME}}:Fire\\(\"([^\"]+)\""
+      group: 1
+      description: "{{EVENT_SERVICE_NAME}} Fire"
+
+# UI 绑定
+uiBinding:
+  findNode:
+    - pattern: "self\\.(\\w+)\\s*=\\s*\\w+:Find\\(\"([^\"]+)\"\\)"
+      group: 2
+      description: "panel:Find 查找节点"
+    - pattern: "GetComponent\\(typeof\\((\\w+)\\<\\w+\\>\\)\\)"
+      group: 1
+      description: "获取 Unity 组件"
+
+# 日志
+logging:
+  error:
+    - pattern: "g_LogError\\("
+      template: "g_LogError(\"[{func}] {msg}\" .. tostring({var}));"
+  info:
+    - pattern: "g_Log\\("
+      template: "g_Log(TAG, \"[{func}] {msg}\");"
+  warning:
+    - pattern: "g_LogWarning\\("
+      template: "g_LogWarning(TAG, \"[{func}] {msg}\");"
+
+# HTTP 请求
+http:
+  patterns:
+    - "HttpRequest\\("
+    - "HttpRequest2\\("
+    - "APIBridge\\.RequestAsync"
+  mock: "App\\.IsStudioClient"
+  responseCheck: "msg\\.code\\s*==\\s*0"
+
+# 脚本生命周期
+lifecycle:
+  initialize: "function\\s+(\\w+):initialize\\(\\)"
+  exit: "function\\s+(\\w+):Exit\\(\\)"
+  tick: "function\\s+(\\w+):Tick\\(\\)"
+
+# 代码质量
+qualityPatterns:
+  nilCheck: "if\\s+.*\\s+then"
+  stringConcat: "\\.\\.\\s"  # Lua uses .. for string concatenation
